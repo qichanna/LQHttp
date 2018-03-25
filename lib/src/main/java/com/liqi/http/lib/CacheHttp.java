@@ -22,8 +22,8 @@ public class CacheHttp {
 
         Request request = new Request.Builder().url("http://www.qq.com/")
 //                .cacheControl(new CacheControl.Builder()
-//                .noCache().build()) //不缓存，一直从网络获取数据
-//                .maxStale(365, TimeUnit.DAYS).build()) //365天内，都不从网络获取
+//                .noCache().build())
+//                .maxStale(365, TimeUnit.DAYS).build())
                 .build();
 
         Response response = client.newCall(request).execute();
