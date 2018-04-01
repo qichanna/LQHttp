@@ -1,8 +1,10 @@
 package com.liqi.download;
 
+import com.liqi.download.db.DownloadEntity;
+import com.liqi.download.db.DownloadHelper;
+import com.liqi.download.file.FileStorageManager;
 import com.liqi.download.http.DownloadCallback;
 import com.liqi.download.http.HttpManager;
-import com.liqi.download.utils.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,7 +22,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
-
 public class DownloadManager {
 
 
@@ -43,9 +44,9 @@ public class DownloadManager {
         }
     });
 
-//    private HashSet<DownloadTask> mHashSet = new HashSet<>();
-//
-//    private List<DownloadEntity> mCache;
+    private HashSet<DownloadTask> mHashSet = new HashSet<>();
+
+    private List<DownloadEntity> mCache;
 
     private long mLength;
 
@@ -74,25 +75,24 @@ public class DownloadManager {
 
     }
 
-//    private void finish(DownloadTask task) {
-//        mHashSet.remove(task);
-//    }
+    private void finish(DownloadTask task) {
+        mHashSet.remove(task);
+    }
 
     public void download(final String url, final DownloadCallback callback) {
-//        final DownloadTask task = new DownloadTask(url, callback);
-//        if (mHashSet.contains(task)) {
-//            callback.fail(HttpManager.TASK_RUNNING_ERROR_CODE, "任务已经执行了");
-//            return;
-//        }
-//        mHashSet.add(task);
-//
-//        mCache = DownloadHelper.getInstance().getAll(url);
-//        if (mCache == null || mCache.size() == 0) {
+        final DownloadTask task = new DownloadTask(url, callback);
+        if (mHashSet.contains(task)) {
+            callback.fail(HttpManager.TASK_RUNNING_ERROR_CODE, "任务已经执行了");
+            return;
+        }
+        mHashSet.add(task);
+
+        mCache = DownloadHelper.getInstance().getAll(url);
+        if (mCache == null || mCache.size() == 0) {
             HttpManager.getInstance().asyncRequest(url, new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
-//                    finish(task);
-                    Logger.debug("liqi", "onFailure ");
+                    finish(task);
                 }
 
                 @Override
@@ -108,57 +108,57 @@ public class DownloadManager {
                         callback.fail(HttpManager.CONTENT_LENGTH_ERROR_CODE, "content length -1");
                         return;
                     }
-                    processDownload(url, mLength, callback);
-//                    finish(task);
+                    processDownload(url, mLength, callback, mCache);
+                    finish(task);
 
                 }
             });
 
-//        } else {
-//            // TODO: 16/9/3 处理已经下载过的数据
-//            for (int i = 0; i < mCache.size(); i++) {
-//                DownloadEntity entity = mCache.get(i);
-//                if (i == mCache.size() - 1) {
-//                    mLength = entity.getEnd_position() + 1;
-//                }
-//                long startSize = entity.getStart_position() + entity.getProgress_position();
-//                long endSize = entity.getEnd_position();
-//                sThreadPool.execute(new DownloadRunnable(startSize, endSize, url, callback, entity));
-//            }
-//        }
+        } else {
+            // TODO: 16/9/3 处理已经下载过的数据
+            for (int i = 0; i < mCache.size(); i++) {
+                DownloadEntity entity = mCache.get(i);
+                if (i == mCache.size() - 1) {
+                    mLength = entity.getEnd_position() + 1;
+                }
+                long startSize = entity.getStart_position() + entity.getProgress_position();
+                long endSize = entity.getEnd_position();
+                sThreadPool.execute(new DownloadRunnable(startSize, endSize, url, callback, entity));
+            }
+        }
 
-//        sLocalProgressPool.execute(new Runnable() {
-//            @Override
-//            public void run() {
-//                while (true) {
-//                    try {
-//                        Thread.sleep(500);
-//                        File file = FileStorageManager.getInstance().getFileByName(url);
-//                        long fileSize = file.length();
-//                        int progress = (int) (fileSize * 100.0 / mLength);
-//                        if (progress >= 100) {
-//                            callback.progress(progress);
-//                            return;
-//                        }
-//                        callback.progress(progress);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//        });
+        sLocalProgressPool.execute(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        Thread.sleep(500);
+                        File file = FileStorageManager.getInstance().getFileByName(url);
+                        long fileSize = file.length();
+                        int progress = (int) (fileSize * 100.0 / mLength);
+                        if (progress >= 100) {
+                            callback.progress(progress);
+                            return;
+                        }
+                        callback.progress(progress);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
 
     }
 
 
-    private void processDownload(String url, long length, DownloadCallback callback) {
+    private void processDownload(String url, long length, DownloadCallback callback, List<DownloadEntity> cache) {
         // 100   2  50  0-49  50-99
         long threadDownloadSize = length / MAX_THREAD;
-//        if (cache == null && cache.size() == 0) {
-//            mCache = new ArrayList<>();
-//        }
+        if (cache == null && cache.size() == 0) {
+            mCache = new ArrayList<>();
+        }
         for (int i = 0; i < MAX_THREAD; i++) {
-//            DownloadEntity entity = new DownloadEntity();
+            DownloadEntity entity = new DownloadEntity();
             long startSize = i * threadDownloadSize;
             long endSize = 0;
             if (i == MAX_THREAD - 1) {
@@ -166,12 +166,12 @@ public class DownloadManager {
             } else {
                 endSize = (i + 1) * threadDownloadSize - 1;
             }
-//
-//            entity.setDownload_url(url);
-//            entity.setStart_position(startSize);
-//            entity.setEnd_position(endSize);
-//            entity.setThread_id(i + 1);
-            sThreadPool.execute(new DownloadRunnable(startSize, endSize, url, callback));
+
+            entity.setDownload_url(url);
+            entity.setStart_position(startSize);
+            entity.setEnd_position(endSize);
+            entity.setThread_id(i + 1);
+            sThreadPool.execute(new DownloadRunnable(startSize, endSize, url, callback, entity));
         }
 
     }

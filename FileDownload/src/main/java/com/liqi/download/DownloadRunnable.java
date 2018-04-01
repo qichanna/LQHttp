@@ -2,7 +2,8 @@ package com.liqi.download;
 
 import android.os.Process;
 
-
+import com.liqi.download.db.DownloadEntity;
+import com.liqi.download.db.DownloadHelper;
 import com.liqi.download.file.FileStorageManager;
 import com.liqi.download.http.DownloadCallback;
 import com.liqi.download.http.HttpManager;
@@ -25,15 +26,15 @@ public class DownloadRunnable implements Runnable {
 
     private DownloadCallback mCallback;
 
-//    private DownloadEntity mEntity;
+    private DownloadEntity mEntity;
 
-//    public DownloadRunnable(long mStart, long mEnd, String mUrl, DownloadCallback mCallback, DownloadEntity mEntity) {
-//        this.mStart = mStart;
-//        this.mEnd = mEnd;
-//        this.mUrl = mUrl;
-//        this.mCallback = mCallback;
-//        this.mEntity = mEntity;
-//    }
+    public DownloadRunnable(long mStart, long mEnd, String mUrl, DownloadCallback mCallback, DownloadEntity mEntity) {
+        this.mStart = mStart;
+        this.mEnd = mEnd;
+        this.mUrl = mUrl;
+        this.mCallback = mCallback;
+        this.mEntity = mEntity;
+    }
 
     public DownloadRunnable(long mStart, long mEnd, String mUrl, DownloadCallback mCallback) {
         this.mStart = mStart;
@@ -53,7 +54,7 @@ public class DownloadRunnable implements Runnable {
         }
         File file = FileStorageManager.getInstance().getFileByName(mUrl);
 
-//        long finshProgress = mEntity.getProgress_position() == null ? 0 : mEntity.getProgress_position();
+        long finshProgress = mEntity.getProgress_position() == null ? 0 : mEntity.getProgress_position();
         long progress = 0;
         try {
             RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rwd");
@@ -64,11 +65,10 @@ public class DownloadRunnable implements Runnable {
             while ((len = inStream.read(buffer, 0, buffer.length)) != -1) {
                 randomAccessFile.write(buffer, 0, len);
                 progress += len;
-//                mEntity.setProgress_position(progress);
-//                Logger.debug("nate", "progress  ----->" + progress);
+                mEntity.setProgress_position(progress);
             }
 
-//            mEntity.setProgress_position(mEntity.getProgress_position() + finshProgress);
+            mEntity.setProgress_position(mEntity.getProgress_position() + finshProgress);
             randomAccessFile.close();
             mCallback.success(file);
         } catch (FileNotFoundException e) {
@@ -76,7 +76,7 @@ public class DownloadRunnable implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-//            DownloadHelper.getInstance().insert(mEntity);
+            DownloadHelper.getInstance().insert(mEntity);
         }
 
     }

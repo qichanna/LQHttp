@@ -2,15 +2,15 @@ package com.liqi.lqhttp;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.liqi.download.DownloadManager;
 import com.liqi.download.file.FileStorageManager;
 import com.liqi.download.http.DownloadCallback;
-import com.liqi.download.http.HttpManager;
 import com.liqi.download.utils.Logger;
 
 import java.io.File;
@@ -19,12 +19,14 @@ public class MainActivity extends AppCompatActivity {
 
     private ImageView mImageView;
     private ProgressBar mProgress;
+    private int count;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mImageView = (ImageView) findViewById(R.id.imageView);
+        mProgress = (ProgressBar) findViewById(R.id.progress);
 
         File file = FileStorageManager.getInstance().getFileByName("http://www.lenovo.com.cn");
         Logger.debug("liqi", "file path = " + file.getAbsoluteFile());
@@ -56,6 +58,12 @@ public class MainActivity extends AppCompatActivity {
         DownloadManager.getInstance().download("https://p3.lefile.cn/product/adminweb/2018/03/23/370898ff-08c1-4bdc-80a8-f4ea56781ebd.jpg", new DownloadCallback() {
             @Override
             public void success(File file) {
+                Log.d("liqi7","111 ");
+                if (count < 1) {
+                    count++;
+                    return;
+                }
+                Log.d("liqi7","222");
                 final Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
                 runOnUiThread(new Runnable() {
                     @Override
@@ -72,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void progress(int progress) {
-
+                mProgress.setProgress(progress);
             }
         });
     }
