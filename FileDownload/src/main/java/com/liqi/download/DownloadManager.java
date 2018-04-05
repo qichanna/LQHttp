@@ -177,20 +177,20 @@ public class DownloadManager {
     }
 
 
-//    public void init(DownloadConfig config) {
-//        sThreadPool = new ThreadPoolExecutor(config.getCoreThreadSize(), config.getMaxThreadSize(), 60, TimeUnit.MILLISECONDS, new LinkedBlockingDeque<Runnable>(), new ThreadFactory() {
-//            private AtomicInteger mInteger = new AtomicInteger(1);
-//
-//            @Override
-//            public Thread newThread(Runnable runnable) {
-//                Thread thread = new Thread(runnable, "download thread #" + mInteger.getAndIncrement());
-//                return thread;
-//            }
-//        });
-//
-//        sLocalProgressPool = Executors.newFixedThreadPool(config.getLocalProgressThreadSize());
-//
-//    }
+    public void init(DownloadConfig config) {
+        sThreadPool = new ThreadPoolExecutor(config.getCoreThreadSize(), config.getMaxThreadSize(), 60, TimeUnit.MILLISECONDS, new LinkedBlockingDeque<Runnable>(), new ThreadFactory() {
+            private AtomicInteger mInteger = new AtomicInteger(1);
+
+            @Override
+            public Thread newThread(Runnable runnable) {
+                Thread thread = new Thread(runnable, "download thread #" + mInteger.getAndIncrement());
+                return thread;
+            }
+        });
+
+        sLocalProgressPool = Executors.newFixedThreadPool(config.getLocalProgressThreadSize());
+
+    }
 
 
 //    public static DownloadManager getInstance() {
