@@ -31,18 +31,9 @@ public class DownloadManager {
     //    private static final DownloadManager sManager = new DownloadManager();
     private static DownloadManager sManager;
 
-    private static ExecutorService sLocalProgressPool = Executors.newFixedThreadPool(LOCAL_PROGRESS_SIZE);
+    private static ExecutorService sLocalProgressPool;
 
-    private static ThreadPoolExecutor sThreadPool = new ThreadPoolExecutor(MAX_THREAD, MAX_THREAD, 60, TimeUnit.MILLISECONDS, new LinkedBlockingDeque<Runnable>(), new ThreadFactory() {
-
-        private AtomicInteger mInteger = new AtomicInteger(1);
-
-        @Override
-        public Thread newThread(Runnable runnable) {
-            Thread thread = new Thread(runnable, "download thread #" + mInteger.getAndIncrement());
-            return thread;
-        }
-    });
+    private static ThreadPoolExecutor sThreadPool;
 
     private HashSet<DownloadTask> mHashSet = new HashSet<>();
 
