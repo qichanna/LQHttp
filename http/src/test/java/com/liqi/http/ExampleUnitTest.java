@@ -1,11 +1,16 @@
 package com.liqi.http;
 
 import com.liqi.OkHttpRequest;
+import com.liqi.service.LQApiProvider;
+import com.liqi.service.LQRequest;
+import com.liqi.service.LQResponse;
 
 import org.junit.Test;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
 
 import okhttp3.OkHttpClient;
 
@@ -21,7 +26,7 @@ public class ExampleUnitTest {
     public void addition_isCorrect() throws Exception {
         assertEquals(4, 2 + 2);
 
-        OkHttpClient client = new OkHttpClient();
+        /*OkHttpClient client = new OkHttpClient();
 //        OkHttpRequest request = new OkHttpRequest(client,HttpMethod.GET,"http://www.lenovo.com");
         OkHttpRequest request = new OkHttpRequest(client,HttpMethod.POST,"http://localhost:8080/HttpServer/HelloServlet");
 
@@ -34,6 +39,32 @@ public class ExampleUnitTest {
         while ((content = reader.readLine()) != null){
             System.out.println(content);
         }
-        response.close();
+        response.close();*/
+
+
+
+
+
+
+        System.out.println("ccc");
+
+
+
+        Map<String, String> map = new HashMap<>();
+        map.put("username", "liqi");
+        map.put("password", "abcdefg");
+//
+        LQApiProvider.helloWorld("http://localhost:8080/HttpServer/HelloServlet", map, new LQResponse<String>() {
+
+            @Override
+            public void success(LQRequest request, String data) {
+                System.out.println("aa");
+            }
+
+            @Override
+            public void fail(int errorCode, String errorMsg) {
+                System.out.println("bb");
+            }
+        });
     }
 }
