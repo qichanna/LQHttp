@@ -7,13 +7,25 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.liqi.download.DownloadManager;
 import com.liqi.download.file.FileStorageManager;
 import com.liqi.download.http.DownloadCallback;
 import com.liqi.download.utils.Logger;
+import com.liqi.service.LQApiProvider;
+import com.liqi.service.LQRequest;
+import com.liqi.service.LQResponse;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -55,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });*/
 
-        DownloadManager.getInstance().download("https://p3.lefile.cn/product/adminweb/2018/03/23/370898ff-08c1-4bdc-80a8-f4ea56781ebd.jpg", new DownloadCallback() {
+        /*DownloadManager.getInstance().download("https://p3.lefile.cn/product/adminweb/2018/03/23/370898ff-08c1-4bdc-80a8-f4ea56781ebd.jpg", new DownloadCallback() {
             @Override
             public void success(File file) {
                 Log.d("liqi7","111 ");
@@ -82,6 +94,38 @@ public class MainActivity extends AppCompatActivity {
             public void progress(int progress) {
                 mProgress.setProgress(progress);
             }
+        });*/
+
+        Map<String, String> map = new HashMap<>();
+        map.put("username", "liqi");
+        map.put("password", "abcdefg");
+//
+        LQApiProvider.helloWorld("http://192.168.1.4:8080/HttpServer/HelloServlet", map, new LQResponse<User>() {
+
+            @Override
+            public void success(LQRequest request, final User data) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(MainActivity.this,data.toString(),500).show();
+                    }
+                });
+
+                Logger.debug("liqi","success: " + data.toString());
+
+            }
+
+            @Override
+            public void fail(int errorCode, String errorMsg) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(MainActivity.this,"fail",500).show();
+                    }
+                });
+                Logger.debug("liqi","fail: " + errorMsg);
+            }
         });
+
     }
 }

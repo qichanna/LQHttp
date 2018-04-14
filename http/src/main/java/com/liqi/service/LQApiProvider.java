@@ -1,6 +1,8 @@
 package com.liqi.service;
 
 import com.liqi.http.HttpMethod;
+import com.liqi.service.convert.Convert;
+import com.liqi.service.convert.JsonConvert;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -13,13 +15,13 @@ public class LQApiProvider {
 
     private static final String ENCODING = "utf-8";
 
-    private static CenterPlatform sWorkStation = new CenterPlatform();
+    private static CenterPlatform mCenterPlatform = new CenterPlatform();
 
-//    private static final List<Convert> sConverts = new ArrayList<>();
-//
-//    static {
-//        sConverts.add(new JsonConvert());
-//    }
+    private static final List<Convert> sConverts = new ArrayList<>();
+
+    static {
+        sConverts.add(new JsonConvert());
+    }
 
 
     public static byte[] encodeParam(Map<String, String> value) {
@@ -47,12 +49,12 @@ public class LQApiProvider {
 
     public static void helloWorld(String ul, Map<String, String> value, LQResponse response) {
         LQRequest request = new LQRequest();
-//        WrapperResponse wrapperResponse = new WrapperResponse(response, sConverts);
+        WrapperResponse wrapperResponse = new WrapperResponse(response, sConverts);
         request.setUrl(ul);
-        request.setMethod(HttpMethod.GET);
+        request.setMethod(HttpMethod.POST);
         request.setData(encodeParam(value));
-        request.setResponse(response);
-        sWorkStation.add(request);
+        request.setResponse(wrapperResponse);
+        mCenterPlatform.add(request);
     }
 
 }

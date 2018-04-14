@@ -53,8 +53,8 @@ public class ExampleUnitTest {
         Map<String, String> map = new HashMap<>();
         map.put("username", "liqi");
         map.put("password", "abcdefg");
-//
-        LQApiProvider.helloWorld("http://localhost:8080/HttpServer/HelloServlet", map, new LQResponse<String>() {
+
+        LQApiProvider.helloWorld("http://192.168.1.3:8080/HttpServer/HelloServlet", map, new LQResponse<String>() {
 
             @Override
             public void success(LQRequest request, String data) {
