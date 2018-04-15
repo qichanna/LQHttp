@@ -11,12 +11,12 @@ import java.util.List;
 
 public class WrapperResponse extends LQResponse<String> {
 
-    private LQResponse mMoocResponse;
+    private LQResponse mLQResponse;
 
     private List<Convert> mConvert;
 
-    public WrapperResponse(LQResponse moocResponse, List<Convert> converts) {
-        this.mMoocResponse = moocResponse;
+    public WrapperResponse(LQResponse lqResponse, List<Convert> converts) {
+        this.mLQResponse = lqResponse;
         this.mConvert = converts;
     }
 
@@ -28,7 +28,7 @@ public class WrapperResponse extends LQResponse<String> {
 
                 try {
                     Object object = convert.parse(data, getType());
-                    mMoocResponse.success(request, object);
+                    mLQResponse.success(request, object);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -42,7 +42,7 @@ public class WrapperResponse extends LQResponse<String> {
 
 
     public Type getType() {
-        Type type = mMoocResponse.getClass().getGenericSuperclass();
+        Type type = mLQResponse.getClass().getGenericSuperclass();
         Type[] paramType = ((ParameterizedType) type).getActualTypeArguments();
         return paramType[0];
     }

@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
         map.put("username", "liqi");
         map.put("password", "abcdefg");
 //
-        LQApiProvider.helloWorld("http://192.168.1.4:8080/HttpServer/HelloServlet", map, new LQResponse<User>() {
+       LQApiProvider.helloWorld("http://192.168.1.4:8080/HttpServer/HelloServlet", map, new LQResponse<User>() {
 
             @Override
             public void success(LQRequest request, final User data) {
