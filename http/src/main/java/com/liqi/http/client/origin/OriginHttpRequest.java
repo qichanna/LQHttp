@@ -1,5 +1,6 @@
-package com.liqi;
+package com.liqi.http.client.origin;
 
+import com.liqi.BufferHttpRequest;
 import com.liqi.http.HttpHeader;
 import com.liqi.http.HttpMethod;
 import com.liqi.http.HttpResponse;

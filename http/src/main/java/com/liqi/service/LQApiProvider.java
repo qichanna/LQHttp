@@ -10,7 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-
+/**
+ * @deprecated
+ */
 public class LQApiProvider {
 
     private static final String ENCODING = "utf-8";

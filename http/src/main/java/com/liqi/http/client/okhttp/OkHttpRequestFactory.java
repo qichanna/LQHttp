@@ -1,5 +1,6 @@
-package com.liqi;
+package com.liqi.http.client.okhttp;
 
+import com.liqi.HttpRequestFactory;
 import com.liqi.http.HttpMethod;
 import com.liqi.http.HttpRequest;
 

@@ -1,18 +1,13 @@
 package com.liqi.http;
 
-import com.liqi.OkHttpRequest;
 import com.liqi.service.LQApiProvider;
 import com.liqi.service.LQRequest;
 import com.liqi.service.LQResponse;
 
 import org.junit.Test;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
-
-import okhttp3.OkHttpClient;
 
 import static org.junit.Assert.*;
 

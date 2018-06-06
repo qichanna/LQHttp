@@ -1,5 +1,6 @@
-package com.liqi;
+package com.liqi.http.client.origin;
 
+import com.liqi.AbstractHttpResponse;
 import com.liqi.http.HttpHeader;
 import com.liqi.http.HttpStatus;
 

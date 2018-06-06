@@ -2,6 +2,8 @@ package com.liqi;
 
 import com.liqi.http.HttpMethod;
 import com.liqi.http.HttpRequest;
+import com.liqi.http.client.okhttp.OkHttpRequestFactory;
+import com.liqi.http.client.origin.OriginHttpRequestFactory;
 import com.liqi.utils.Utills;
 
 import java.io.IOException;

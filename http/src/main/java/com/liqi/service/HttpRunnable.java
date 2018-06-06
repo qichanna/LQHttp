@@ -6,7 +6,9 @@ import com.liqi.http.HttpResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-
+/**
+ * @deprecated
+ */
 public class HttpRunnable implements Runnable {
 
     private HttpRequest mHttpRequest;

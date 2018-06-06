@@ -2,6 +2,9 @@ package com.liqi.service;
 
 import com.liqi.http.HttpMethod;
 
+/**
+ * @deprecated
+ */
 public class LQRequest {
 
     private String mUrl;

@@ -13,7 +13,9 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-
+/**
+ * @deprecated
+ */
 public class CenterPlatform {
 
     private static final int MAX_REQUEST_SIZE = 60;
