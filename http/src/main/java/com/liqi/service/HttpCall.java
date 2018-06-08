@@ -1,6 +1,7 @@
 package com.liqi.service;
 
 import com.liqi.HttpRequestProvider;
+import com.liqi.LQClient;
 import com.liqi.http.HttpRequest;
 import com.liqi.http.HttpResponse;
 import com.liqi.service.convert.Convert;
@@ -21,11 +22,19 @@ public class HttpCall implements HttpEngine{
     private Callback mCallback;
     private HttpRequestProvider mProvider;
 
-    public HttpCall(Request request,ExecutorService executorService,List<Convert> converts, HttpRequestProvider provider, Callback callback){
+//    public HttpCall(Request request,ExecutorService executorService,List<Convert> converts, HttpRequestProvider provider, Callback callback){
+//        this.mRequest = request;
+//        this.mExecutorService = executorService;
+//        this.mConvert = converts;
+//        this.mProvider = provider;
+//        this.mCallback = callback;
+//    }
+
+    public HttpCall(Request request, LQClient client, Callback callback){
         this.mRequest = request;
-        this.mExecutorService = executorService;
-        this.mConvert = converts;
-        this.mProvider = provider;
+        this.mExecutorService = client.getmExecutor();
+        this.mConvert = client.getmConverts();
+        this.mProvider = client.getmProvider();
         this.mCallback = callback;
     }
 

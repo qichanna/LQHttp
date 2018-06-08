@@ -1,13 +1,25 @@
 package com.liqi.http;
 
+import com.liqi.HttpRequestProvider;
+import com.liqi.LQClient;
+import com.liqi.ResultResponse;
+import com.liqi.service.Callback;
+import com.liqi.service.HttpCall;
 import com.liqi.service.LQApiProvider;
 import com.liqi.service.LQRequest;
 import com.liqi.service.LQResponse;
+import com.liqi.service.Request;
+import com.liqi.service.Response;
+import com.liqi.service.convert.Convert;
+import com.liqi.service.convert.JsonConvert;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
 
 import static org.junit.Assert.*;
 
@@ -45,7 +57,7 @@ public class ExampleUnitTest {
 
 
 
-        Map<String, String> map = new HashMap<>();
+        /*Map<String, String> map = new HashMap<>();
         map.put("username", "liqi");
         map.put("password", "abcdefg");
 
@@ -60,6 +72,33 @@ public class ExampleUnitTest {
             public void fail(int errorCode, String errorMsg) {
                 System.out.println("bb");
             }
+        });*/
+
+
+        Request request = new Request.Builder()
+                .url("http://192.168.1.2:8080/HttpServer/HelloServlet")
+                .addFormParam("username","2222")
+                .addFormParam("password","3333")
+                .httpMethod(HttpMethod.POST)
+                .build();
+
+//        List<Convert> converts = new ArrayList<>();
+//        converts.add(new JsonConvert());
+
+        LQClient client = new LQClient.Builder().url("http://192.168.1.2:8080/HttpServer/HelloServlet")
+                .executor(Executors.newCachedThreadPool())
+                .builder();
+        HttpCall httpCall = new HttpCall(request,client, new Callback<User>() {
+            @Override
+            public void onSuccess(Response<User> response) {
+                System.out.print(response.body());
+            }
+
+            @Override
+            public void onFailure(String errorMsg) {
+
+            }
         });
+        httpCall.invoke().get();
     }
 }
