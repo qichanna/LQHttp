@@ -14,4 +14,6 @@ public interface HttpRequest extends Header {
 
     HttpResponse execute() throws IOException;
 
+    void setHeaders(HttpHeader httpHeader);
+
 }

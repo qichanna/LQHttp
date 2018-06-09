@@ -19,6 +19,11 @@ public abstract class AbstractHttpRequest implements HttpRequest {
     private boolean executed;
 
     @Override
+    public void setHeaders(HttpHeader httpHeader){
+        this.mHeader = httpHeader;
+    }
+
+    @Override
     public HttpHeader getHeaders() {
         return mHeader;
     }

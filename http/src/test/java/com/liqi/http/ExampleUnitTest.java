@@ -3,6 +3,9 @@ package com.liqi.http;
 import com.liqi.HttpRequestProvider;
 import com.liqi.LQClient;
 import com.liqi.ResultResponse;
+import com.liqi.annotation.Field;
+import com.liqi.annotation.Header;
+import com.liqi.annotation.POST;
 import com.liqi.service.Callback;
 import com.liqi.service.HttpCall;
 import com.liqi.service.LQApiProvider;
@@ -29,6 +32,14 @@ import static org.junit.Assert.*;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 public class ExampleUnitTest {
+
+    interface Api{
+        @Header("Cache-control: max-age=64000")
+        @POST("HttpServer/HelloServlet")
+        void fetch(@Field("username") String uname, @Field("password") int ps,Callback<User> callback);
+    }
+
+
     @Test
     public void addition_isCorrect() throws Exception {
         assertEquals(4, 2 + 2);
@@ -75,20 +86,22 @@ public class ExampleUnitTest {
         });*/
 
 
-        Request request = new Request.Builder()
-                .url("http://192.168.1.2:8080/HttpServer/HelloServlet")
-                .addFormParam("username","2222")
-                .addFormParam("password","3333")
-                .httpMethod(HttpMethod.POST)
-                .build();
+//        Request request = new Request.Builder()
+//                .url("http://192.168.1.4:8080/HttpServer/HelloServlet")
+//                .addFormParam("username","2222")
+//                .addFormParam("password","3333")
+//                .httpMethod(HttpMethod.POST)
+//                .build();
 
 //        List<Convert> converts = new ArrayList<>();
 //        converts.add(new JsonConvert());
 
-        LQClient client = new LQClient.Builder().url("http://192.168.1.2:8080/HttpServer/HelloServlet")
+        LQClient client = new LQClient.Builder().url("http://192.168.1.4:8080/")
                 .executor(Executors.newCachedThreadPool())
                 .builder();
-        HttpCall httpCall = new HttpCall(request,client, new Callback<User>() {
+
+        Api api = client.create(Api.class);
+        api.fetch("myname", 1234567, new Callback<User>() {
             @Override
             public void onSuccess(Response<User> response) {
                 System.out.print(response.body());
@@ -99,6 +112,19 @@ public class ExampleUnitTest {
 
             }
         });
-        httpCall.invoke().get();
+
+
+        /*HttpCall httpCall = new HttpCall(request,client, new Callback<User>() {
+            @Override
+            public void onSuccess(Response<User> response) {
+                System.out.print(response.body());
+            }
+
+            @Override
+            public void onFailure(String errorMsg) {
+
+            }
+        });
+        httpCall.invoke().get();*/
     }
 }
