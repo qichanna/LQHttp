@@ -2,15 +2,21 @@ package com.liqi;
 
 import com.liqi.annotation.DELETE;
 import com.liqi.annotation.Field;
+import com.liqi.annotation.FieldMap;
 import com.liqi.annotation.GET;
 import com.liqi.annotation.Header;
 import com.liqi.annotation.POST;
 import com.liqi.annotation.PUT;
+import com.liqi.annotation.Path;
 import com.liqi.annotation.Query;
+import com.liqi.annotation.QueryMap;
 import com.liqi.http.HttpHeader;
 import com.liqi.http.HttpMethod;
+import com.liqi.process.FieldMapParamAnnotationProcess;
 import com.liqi.process.FieldParamAnnotationProcess;
 import com.liqi.process.ParamAnnotationProcess;
+import com.liqi.process.PathParamAnnotationProcess;
+import com.liqi.process.QueryMapParamAnnotationProcess;
 import com.liqi.process.QueryParamAnnotationProcess;
 import com.liqi.service.Request;
 
@@ -84,17 +90,17 @@ public class MethodAnnotationProcess {
         } else if (annotation instanceof Query) {
             Query query = (Query) annotation;
             process = new QueryParamAnnotationProcess(mBuilder, query.value(), query.encoded());
+        } else if (annotation instanceof QueryMap) {
+            QueryMap query = (QueryMap) annotation;
+            process = new QueryMapParamAnnotationProcess(mBuilder, query.value(), query.encoded());
+        } else if (annotation instanceof Path) {
+            Path path = (Path) annotation;
+            process = new PathParamAnnotationProcess(mBuilder, path.value(), mRealUrl);
+        } else if (annotation instanceof FieldMap) {
+            FieldMap query = (FieldMap) annotation;
+            process = new FieldMapParamAnnotationProcess(mBuilder, query.value(), query.encoded());
         }
-//        else if (annotation instanceof QueryMap) {
-//            QueryMap query = (QueryMap) annotation;
-//            process = new QueryMapParamAnnotationProcess(mBuilder, query.value(), query.encoded());
-//        } else if (annotation instanceof Path) {
-//            Path path = (Path) annotation;
-//            process = new PathParamAnnotationProcess(mBuilder, path.value(), mRealUrl);
-//        } else if (annotation instanceof FieldMap) {
-//            FieldMap query = (FieldMap) annotation;
-//            process = new FieldMapParamAnnotationProcess(mBuilder, query.value(), query.encoded());
-//        } else if (annotation instanceof Body) {
+//        else if (annotation instanceof Body) {
 //            process = new BodyParamAnnotationProcess(mBuilder, null);
 //        }
         mAnnotationProcess.add(process);

@@ -4,8 +4,13 @@ import com.liqi.HttpRequestProvider;
 import com.liqi.LQClient;
 import com.liqi.ResultResponse;
 import com.liqi.annotation.Field;
+import com.liqi.annotation.FieldMap;
+import com.liqi.annotation.GET;
 import com.liqi.annotation.Header;
 import com.liqi.annotation.POST;
+import com.liqi.annotation.Path;
+import com.liqi.annotation.Query;
+import com.liqi.annotation.QueryMap;
 import com.liqi.service.Callback;
 import com.liqi.service.HttpCall;
 import com.liqi.service.LQApiProvider;
@@ -33,10 +38,27 @@ import static org.junit.Assert.*;
  */
 public class ExampleUnitTest {
 
+    private static final String BASE_URL = "http://192.168.1.4:8080/HttpServer/";
     interface Api{
         @Header("Cache-control: max-age=64000")
-        @POST("HttpServer/HelloServlet")
+        @POST("HelloServlet")
         void fetch(@Field("username") String uname, @Field("password") int ps,Callback<User> callback);
+
+        @Header("Cache-control: max-age=64000")
+        @GET("HelloServlet")
+        void fetchQuery(@Query("username") String uname, @Query("password") int ps, Callback<User> callback);
+
+        @Header("Cache-control: max-age=64000")
+        @GET("HelloServlet")
+        void fetchQueryMap(@QueryMap() Map<String, String> map, Callback<User> callback);
+
+        @Header("Cache-control: max-age=64000")
+        @GET("{path}")
+        void fetchPath(@Path("path") String path,@QueryMap Map<String,String> map, Callback<User> callback);
+
+        @Header("Cache-control: max-age=64000")
+        @POST("HelloServlet")
+        void fetchFieldMap(@FieldMap() Map<String,String > map, Callback<User> callback);
     }
 
 
@@ -96,12 +118,18 @@ public class ExampleUnitTest {
 //        List<Convert> converts = new ArrayList<>();
 //        converts.add(new JsonConvert());
 
-        LQClient client = new LQClient.Builder().url("http://192.168.1.4:8080/")
+        LQClient client = new LQClient.Builder().url(BASE_URL)
                 .executor(Executors.newCachedThreadPool())
                 .builder();
 
         Api api = client.create(Api.class);
-        api.fetch("myname", 1234567, new Callback<User>() {
+
+        HashMap<String,String> map = new HashMap<>();
+        map.put("username","myname");
+        map.put("password","888888");
+
+
+        api.fetchPath("HelloServlet",map, new Callback<User>() {
             @Override
             public void onSuccess(Response<User> response) {
                 System.out.print(response.body());

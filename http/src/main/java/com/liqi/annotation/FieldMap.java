@@ -5,9 +5,15 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * @author nate
+ */
+
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Query {
-    String value();
+public @interface FieldMap {
+
+    String value() default "";
+
     boolean encoded() default true;
 }

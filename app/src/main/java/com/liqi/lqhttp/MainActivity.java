@@ -9,18 +9,28 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.liqi.HttpRequestProvider;
 import com.liqi.download.DownloadManager;
 import com.liqi.download.file.FileStorageManager;
 import com.liqi.download.http.DownloadCallback;
 import com.liqi.download.utils.Logger;
+import com.liqi.http.HttpMethod;
+import com.liqi.service.Callback;
+import com.liqi.service.HttpCall;
 import com.liqi.service.LQApiProvider;
 import com.liqi.service.LQRequest;
 import com.liqi.service.LQResponse;
+import com.liqi.service.convert.Convert;
+import com.liqi.service.convert.JsonConvert;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
 
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
@@ -126,6 +136,5 @@ public class MainActivity extends AppCompatActivity {
                 Logger.debug("liqi","fail: " + errorMsg);
             }
         });
-
     }
 }

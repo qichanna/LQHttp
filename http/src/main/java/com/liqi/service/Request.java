@@ -39,6 +39,9 @@ public class Request {
         this.mMethod = builder.mMethod;
         this.mHeader = builder.mHeader;
         this.mData = encodeParam(builder.mFormParams);
+        if(builder.mQueryParams.size() > 0){
+            this.mUrl = mUrl + "?" + new String(encodeParam((builder.mQueryParams)));
+        }
     }
 
     public static byte[] encodeParam(Map<String, String> value) {

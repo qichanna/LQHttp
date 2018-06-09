@@ -1,6 +1,5 @@
 package com.liqi.service;
 
-import com.liqi.HttpRequestProvider;
 import com.liqi.LQClient;
 import com.liqi.http.HttpRequest;
 import com.liqi.http.HttpResponse;
@@ -10,17 +9,16 @@ import com.liqi.utils.TypeUtils;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.URI;
-import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 public class HttpCall implements HttpEngine{
     private Request mRequest;
-    private ExecutorService mExecutorService;
-    private List<Convert> mConvert;
     private Callback mCallback;
-    private HttpRequestProvider mProvider;
+    private LQClient mLqClient;
+//    private ExecutorService mExecutorService;
+//    private List<Convert> mConvert;
+//    private HttpRequestProvider mProvider;
 
 //    public HttpCall(Request request,ExecutorService executorService,List<Convert> converts, HttpRequestProvider provider, Callback callback){
 //        this.mRequest = request;
@@ -32,19 +30,23 @@ public class HttpCall implements HttpEngine{
 
     public HttpCall(Request request, LQClient client, Callback callback){
         this.mRequest = request;
-        this.mExecutorService = client.getmExecutor();
-        this.mConvert = client.getmConverts();
-        this.mProvider = client.getmProvider();
         this.mCallback = callback;
+        this.mLqClient = client;
+//        this.mExecutorService = client.getmExecutor();
+//        this.mConvert = client.getmConverts();
+//        this.mProvider = client.getmProvider();
+
     }
 
     @Override
     public HttpResponse execute() throws IOException {
-        HttpRequest request;
-        request = mProvider.getHttpRequest(URI.create(mRequest.getmUrl()),mRequest.getmMethod());
-        request.setHeaders(mRequest.getmHeader());
-        request.getBody().write(mRequest.getmData());
-        return request.execute();
+        HttpRequest httpRequest;
+        httpRequest = mLqClient.getmProvider().getHttpRequest(URI.create(mRequest.getmUrl()),mRequest.getmMethod());
+        httpRequest.setHeaders(mRequest.getmHeader());
+        if(mRequest.getmData() != null){
+            httpRequest.getBody().write(mRequest.getmData());
+        }
+        return httpRequest.execute();
     }
 
     public <T> T invoke(Class responseType){
@@ -74,14 +76,14 @@ public class HttpCall implements HttpEngine{
     }
 
     public <T> T convertResponse(HttpResponse response,Type type) throws IOException {
-        for (Convert convert : mConvert) {
+        for (Convert convert : mLqClient.getmConverts()) {
             return (T) convert.parse(response,type);
         }
         return null;
     }
 
     public <T> Future<T> invoke(){
-        return mExecutorService.submit(new Callable<T>() {
+        return mLqClient.getmExecutor().submit(new Callable<T>() {
             @Override
             public T call() throws Exception {
                 return invoke(mCallback.getClass());
