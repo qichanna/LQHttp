@@ -8,7 +8,7 @@ public interface HttpRequest extends Header {
 
     HttpMethod getMethod();
 
-    URI getUri();
+    String getUri();
 
     OutputStream getBody();
 

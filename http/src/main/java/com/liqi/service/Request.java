@@ -2,7 +2,11 @@ package com.liqi.service;
 
 import com.liqi.http.HttpHeader;
 import com.liqi.http.HttpMethod;
+import com.liqi.http.MediaType;
+import com.liqi.http.RequestBody;
+import com.liqi.utils.HttpUrl;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -12,12 +16,17 @@ import java.util.Map;
  * 上层的业务请求对象
  */
 public class Request {
-    private static final String ENCODING = "utf-8";
+//    private static final String ENCODING = "utf-8";
     private String mUrl;
     private HttpMethod mMethod;
     private HttpHeader mHeader;
-    private byte[] mData;
+    private RequestBody mBody;
+    private Map<String, String> mFormParams;
+//    private byte[] mData;
 
+    public RequestBody getBody() {
+        return mBody;
+    }
     public String getmUrl() {
         return mUrl;
     }
@@ -30,21 +39,23 @@ public class Request {
         return mHeader;
     }
 
-    public byte[] getmData() {
-        return mData;
-    }
+//    public byte[] getmData() {
+//        return mData;
+//    }
 
     public Request(Builder builder){
         this.mUrl = builder.mUrl;
         this.mMethod = builder.mMethod;
         this.mHeader = builder.mHeader;
-        this.mData = encodeParam(builder.mFormParams);
-        if(builder.mQueryParams.size() > 0){
-            this.mUrl = mUrl + "?" + new String(encodeParam((builder.mQueryParams)));
-        }
+        this.mBody = builder.mRequestBody;
+        this.mFormParams = builder.mFormParams;
+//        this.mData = encodeParam(builder.mFormParams);
+//        if(builder.mQueryParams.size() > 0){
+//            this.mUrl = mUrl + "?" + new String(encodeParam((builder.mQueryParams)));
+//        }
     }
 
-    public static byte[] encodeParam(Map<String, String> value) {
+    /*public static byte[] encodeParam(Map<String, String> value) {
         if (value == null || value.size() == 0) {
             return null;
         }
@@ -65,7 +76,7 @@ public class Request {
             e.printStackTrace();
         }
         return buffer.toString().getBytes();
-    }
+    }*/
 
     public static class Builder{
         private String mUrl;
@@ -73,6 +84,7 @@ public class Request {
         private HttpHeader mHeader;
         private Map<String,String> mFormParams = new HashMap<>();
         private Map<String,String> mQueryParams = new HashMap<>();
+        private RequestBody mRequestBody;
 
         public Builder url(String url){
             this.mUrl = url;
@@ -81,6 +93,11 @@ public class Request {
 
         public Builder httpMethod(HttpMethod method){
             this.mMethod = method;
+            return this;
+        }
+
+        public Builder requestBody(RequestBody body) {
+            this.mRequestBody = body;
             return this;
         }
 
@@ -100,6 +117,17 @@ public class Request {
         }
 
         public Request build(){
+            try {
+                if (mQueryParams.size() > 0) {
+                    this.mUrl = HttpUrl.encodedQuery(mUrl, mQueryParams);
+                }
+                if (mFormParams.size() != 0) {
+                    mRequestBody = new RequestBody.FormBody(HttpUrl.encodedForm(mFormParams), MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new RuntimeException("编码解析出错");
+            }
             return new Request(this);
         }
     }

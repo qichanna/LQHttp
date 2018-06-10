@@ -3,6 +3,7 @@ package com.liqi.http;
 import com.liqi.HttpRequestProvider;
 import com.liqi.LQClient;
 import com.liqi.ResultResponse;
+import com.liqi.annotation.Body;
 import com.liqi.annotation.Field;
 import com.liqi.annotation.FieldMap;
 import com.liqi.annotation.GET;
@@ -38,7 +39,7 @@ import static org.junit.Assert.*;
  */
 public class ExampleUnitTest {
 
-    private static final String BASE_URL = "http://192.168.1.4:8080/HttpServer/";
+    private static final String BASE_URL = "http://192.168.1.3:8080/HttpServer/";
     interface Api{
         @Header("Cache-control: max-age=64000")
         @POST("HelloServlet")
@@ -59,6 +60,10 @@ public class ExampleUnitTest {
         @Header("Cache-control: max-age=64000")
         @POST("HelloServlet")
         void fetchFieldMap(@FieldMap() Map<String,String > map, Callback<User> callback);
+
+        @Header("Cache-control: max-age=64000")
+        @POST("HelloServletBody")
+        void fetchBody(@Body() User user, Callback<User> callback);
     }
 
 
@@ -128,8 +133,11 @@ public class ExampleUnitTest {
         map.put("username","myname");
         map.put("password","888888");
 
+        User user = new User();
+        user.setName("testname");
+        user.setPassword("testpass");
 
-        api.fetchPath("HelloServlet",map, new Callback<User>() {
+        api.fetchBody(user, new Callback<User>() {
             @Override
             public void onSuccess(Response<User> response) {
                 System.out.print(response.body());

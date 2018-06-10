@@ -57,11 +57,11 @@ public class CenterPlatform {
 
     public void doHttpRequest(LQRequest request) {
         HttpRequest httpRequest = null;
-        try {
+        /*try {
             httpRequest = mRequestProvider.getHttpRequest(URI.create(request.getUrl()), request.getMethod());
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
 
         sThreadPool.execute(new HttpRunnable(httpRequest, request, this));
     }

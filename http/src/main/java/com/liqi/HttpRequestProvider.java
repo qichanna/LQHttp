@@ -1,13 +1,12 @@
 package com.liqi;
 
-import com.liqi.http.HttpMethod;
 import com.liqi.http.HttpRequest;
 import com.liqi.http.client.okhttp.OkHttpRequestFactory;
 import com.liqi.http.client.origin.OriginHttpRequestFactory;
+import com.liqi.service.Request;
 import com.liqi.utils.Utills;
 
 import java.io.IOException;
-import java.net.URI;
 
 public class HttpRequestProvider {
 
@@ -23,8 +22,8 @@ public class HttpRequestProvider {
         }
     }
 
-    public HttpRequest getHttpRequest(URI uri, HttpMethod httpMethod) throws IOException {
-        return mHttpRequestFactory.createHttpRequest(uri, httpMethod);
+    public HttpRequest getHttpRequest(Request request) throws IOException {
+        return mHttpRequestFactory.createHttpRequest(request);
     }
 
     public HttpRequestFactory getHttpRequestFactory() {

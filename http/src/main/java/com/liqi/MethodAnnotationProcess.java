@@ -1,5 +1,6 @@
 package com.liqi;
 
+import com.liqi.annotation.Body;
 import com.liqi.annotation.DELETE;
 import com.liqi.annotation.Field;
 import com.liqi.annotation.FieldMap;
@@ -12,6 +13,7 @@ import com.liqi.annotation.Query;
 import com.liqi.annotation.QueryMap;
 import com.liqi.http.HttpHeader;
 import com.liqi.http.HttpMethod;
+import com.liqi.process.BodyParamAnnotationProcess;
 import com.liqi.process.FieldMapParamAnnotationProcess;
 import com.liqi.process.FieldParamAnnotationProcess;
 import com.liqi.process.ParamAnnotationProcess;
@@ -99,10 +101,9 @@ public class MethodAnnotationProcess {
         } else if (annotation instanceof FieldMap) {
             FieldMap query = (FieldMap) annotation;
             process = new FieldMapParamAnnotationProcess(mBuilder, query.value(), query.encoded());
+        } else if (annotation instanceof Body) {
+            process = new BodyParamAnnotationProcess(mBuilder, null);
         }
-//        else if (annotation instanceof Body) {
-//            process = new BodyParamAnnotationProcess(mBuilder, null);
-//        }
         mAnnotationProcess.add(process);
     }
 

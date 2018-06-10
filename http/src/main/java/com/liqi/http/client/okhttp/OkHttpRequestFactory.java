@@ -3,6 +3,7 @@ package com.liqi.http.client.okhttp;
 import com.liqi.HttpRequestFactory;
 import com.liqi.http.HttpMethod;
 import com.liqi.http.HttpRequest;
+import com.liqi.service.Request;
 
 import java.io.IOException;
 import java.net.URI;
@@ -41,7 +42,7 @@ public class OkHttpRequestFactory implements HttpRequestFactory {
     }
 
     @Override
-    public HttpRequest createHttpRequest(URI uri, HttpMethod method) throws IOException {
-        return new OkHttpRequest(mClient, method, uri.toString());
+    public HttpRequest createHttpRequest(Request request) throws IOException {
+        return new OkHttpRequest(request,mClient);
     }
 }

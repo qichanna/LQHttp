@@ -3,6 +3,7 @@ package com.liqi.http.client.origin;
 import com.liqi.HttpRequestFactory;
 import com.liqi.http.HttpMethod;
 import com.liqi.http.HttpRequest;
+import com.liqi.service.Request;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -25,8 +26,7 @@ public class OriginHttpRequestFactory implements HttpRequestFactory {
     }
 
     @Override
-    public HttpRequest createHttpRequest(URI uri, HttpMethod method) throws IOException {
-        mConnection = (HttpURLConnection) uri.toURL().openConnection();
-        return new OriginHttpRequest(mConnection, method, uri.toString());
+    public HttpRequest createHttpRequest(Request request) throws IOException {
+        return null;
     }
 }

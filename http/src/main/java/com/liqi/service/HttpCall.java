@@ -41,11 +41,7 @@ public class HttpCall implements HttpEngine{
     @Override
     public HttpResponse execute() throws IOException {
         HttpRequest httpRequest;
-        httpRequest = mLqClient.getmProvider().getHttpRequest(URI.create(mRequest.getmUrl()),mRequest.getmMethod());
-        httpRequest.setHeaders(mRequest.getmHeader());
-        if(mRequest.getmData() != null){
-            httpRequest.getBody().write(mRequest.getmData());
-        }
+        httpRequest = mLqClient.getmProvider().getHttpRequest(mRequest);
         return httpRequest.execute();
     }
 

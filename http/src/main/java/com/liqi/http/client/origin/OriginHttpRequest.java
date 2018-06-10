@@ -4,6 +4,7 @@ import com.liqi.BufferHttpRequest;
 import com.liqi.http.HttpHeader;
 import com.liqi.http.HttpMethod;
 import com.liqi.http.HttpResponse;
+import com.liqi.service.Request;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -19,11 +20,15 @@ public class OriginHttpRequest extends BufferHttpRequest {
 
     private HttpMethod mMethod;
 
-    public OriginHttpRequest(HttpURLConnection connection, HttpMethod method, String url) {
-        this.mConnection = connection;
-        this.mUrl = url;
-        this.mMethod = method;
+    public OriginHttpRequest(Request request, Object client) {
+        super(request, client);
     }
+
+//    public OriginHttpRequest(HttpURLConnection connection, HttpMethod method, String url) {
+//        this.mConnection = connection;
+//        this.mUrl = url;
+//        this.mMethod = method;
+//    }
 
     @Override
     protected HttpResponse executeInternal(HttpHeader header, byte[] data) throws IOException {
@@ -45,13 +50,13 @@ public class OriginHttpRequest extends BufferHttpRequest {
     }
 
 
-    @Override
-    public HttpMethod getMethod() {
-        return mMethod;
-    }
-
-    @Override
-    public URI getUri() {
-        return URI.create(mUrl);
-    }
+//    @Override
+//    public HttpMethod getMethod() {
+//        return mMethod;
+//    }
+//
+//    @Override
+//    public URI getUri() {
+//        return URI.create(mUrl);
+//    }
 }
