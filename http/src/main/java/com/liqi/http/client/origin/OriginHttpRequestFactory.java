@@ -6,8 +6,11 @@ import com.liqi.http.HttpRequest;
 import com.liqi.service.Request;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
+
+import javax.net.ssl.SSLSocketFactory;
 
 public class OriginHttpRequestFactory implements HttpRequestFactory {
 
@@ -27,6 +30,11 @@ public class OriginHttpRequestFactory implements HttpRequestFactory {
 
     @Override
     public HttpRequest createHttpRequest(Request request) throws IOException {
+        return null;
+    }
+
+    @Override
+    public SSLSocketFactory getSocketFactory(InputStream inputStream) throws Exception {
         return null;
     }
 }
