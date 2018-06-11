@@ -2,25 +2,17 @@ package com.liqi.http.client.origin;
 
 import com.liqi.BufferHttpRequest;
 import com.liqi.http.HttpHeader;
-import com.liqi.http.HttpMethod;
 import com.liqi.http.HttpResponse;
 import com.liqi.service.Request;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.util.Map;
 
-public class OriginHttpRequest extends BufferHttpRequest {
+public class OriginHttpRequest extends BufferHttpRequest<HttpURLConnection> {
 
-    private HttpURLConnection mConnection;
-
-    private String mUrl;
-
-    private HttpMethod mMethod;
-
-    public OriginHttpRequest(Request request, Object client) {
+    public OriginHttpRequest(Request request, HttpURLConnection client) {
         super(request, client);
     }
 
@@ -34,18 +26,18 @@ public class OriginHttpRequest extends BufferHttpRequest {
     protected HttpResponse executeInternal(HttpHeader header, byte[] data) throws IOException {
 
         for (Map.Entry<String, String> entry : header.entrySet()) {
-            mConnection.addRequestProperty(entry.getKey(), entry.getValue());
+            mClient.addRequestProperty(entry.getKey(), entry.getValue());
         }
-        mConnection.setDoOutput(true);
-        mConnection.setDoInput(true);
-        mConnection.setRequestMethod(mMethod.name());
-        mConnection.connect();
+        mClient.setDoOutput(true);
+        mClient.setDoInput(true);
+        mClient.setRequestMethod(getMethod().name());
+        mClient.connect();
         if (data != null && data.length > 0) {
-            OutputStream out = mConnection.getOutputStream();
+            OutputStream out = mClient.getOutputStream();
             out.write(data, 0, data.length);
             out.close();
         }
-        OriginHttpResponse response = new OriginHttpResponse(mConnection);
+        OriginHttpResponse response = new OriginHttpResponse(mClient);
         return response;
     }
 

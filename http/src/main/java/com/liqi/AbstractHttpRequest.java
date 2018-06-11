@@ -31,9 +31,9 @@ public abstract class AbstractHttpRequest<T> implements HttpRequest {
         this.mUrl = request.getmUrl();
         this.mHttpMethod = request.getmMethod();
         this.mRequestBody = request.getBody();
-//        if (request.getmHeader() != null) {
+        if (request.getmHeader() != null) {
             this.mHeader = request.getmHeader();
-//        }
+        }
     }
 
     @Override

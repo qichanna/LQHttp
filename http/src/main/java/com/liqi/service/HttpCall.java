@@ -40,9 +40,7 @@ public class HttpCall implements HttpEngine{
 
     @Override
     public HttpResponse execute() throws IOException {
-        HttpRequest httpRequest;
-        httpRequest = mLqClient.getmProvider().getHttpRequest(mRequest);
-        return httpRequest.execute();
+        return mLqClient.getHttpClient().execute(mRequest);
     }
 
     public <T> T invoke(Class responseType){

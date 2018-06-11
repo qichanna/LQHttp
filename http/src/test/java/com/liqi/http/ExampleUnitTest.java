@@ -137,7 +137,7 @@ public class ExampleUnitTest {
         user.setName("testname");
         user.setPassword("testpass");
 
-        api.fetchBody(user, new Callback<User>() {
+        api.fetchQueryMap(map, new Callback<User>() {
             @Override
             public void onSuccess(Response<User> response) {
                 System.out.print(response.body());

@@ -1,5 +1,12 @@
 package com.liqi;
 
+import com.liqi.http.HttpResponse;
+import com.liqi.http.client.okhttp.OkHttpClient;
+import com.liqi.http.client.origin.OriginHttpClient;
+import com.liqi.service.Request;
+import com.liqi.utils.Utills;
+
+import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.SecureRandom;
@@ -12,13 +19,16 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 
-public class HttpClient {
+public class HttpClient implements Call{
+
+    private static boolean OKHTTP_REQUEST = Utills.isExist("okhttp3.OkHttpClient", HttpRequestProvider.class.getClassLoader());
 
     private int mWriteTimeOut;
     private int mReaderTimeOut;
     private int mConnectTimeOut;
     public SSLSocketFactory mSSLSocketFactory;
     private HostnameVerifier mHostnameVerifier;
+    private Call mRealHttpClient;
 
     public HttpClient(Builder builder) {
         mWriteTimeOut = builder.mWriteTimeOut;
@@ -28,7 +38,38 @@ public class HttpClient {
         mHostnameVerifier = builder.mHostnameVerifier;
     }
 
-    private static class Builder{
+    public int getmReaderTimeOut(){
+        return mReaderTimeOut;
+    }
+
+    public int getmWriteTimeOut(){
+        return mWriteTimeOut;
+    }
+
+    public int getmConnectTimeOut(){
+        return mConnectTimeOut;
+    }
+
+    public SSLSocketFactory getSSLSocketFactory(){
+        return mSSLSocketFactory;
+    }
+
+    public HostnameVerifier getHostnameVerifier(){
+        return mHostnameVerifier;
+    }
+
+    @Override
+    public HttpResponse execute(Request request) throws IOException {
+//        OKHTTP_REQUEST = false;
+        if (OKHTTP_REQUEST) {
+            mRealHttpClient = new OkHttpClient(this);
+        } else {
+            mRealHttpClient = new OriginHttpClient(this);
+        }
+        return mRealHttpClient.execute(request);
+    }
+
+    public static class Builder{
         private int mWriteTimeOut;
         private int mReaderTimeOut;
         private int mConnectTimeOut;

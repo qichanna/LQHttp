@@ -12,14 +12,14 @@ import java.util.concurrent.ExecutorService;
 
 public class LQClient {
     private String mUrl;
-    private HttpRequestProvider mProvider;
+    private HttpClient mHttpClient;
     private ExecutorService mExecutor;
     private List<Convert> mConverts;
     private HashMap<Method, MethodAnnotationProcess> mMethodCache = new HashMap<>();
 
     public LQClient(Builder builder) {
         this.mUrl = builder.mUrl;
-        this.mProvider = builder.mProvider;
+        this.mHttpClient = builder.mHttpClient;
         this.mExecutor = builder.mExecutor;
         this.mConverts = builder.mConverts;
     }
@@ -28,8 +28,8 @@ public class LQClient {
         return mUrl;
     }
 
-    public HttpRequestProvider getmProvider() {
-        return mProvider;
+    public HttpClient getHttpClient() {
+        return mHttpClient;
     }
 
     public ExecutorService getmExecutor() {
@@ -53,8 +53,12 @@ public class LQClient {
     }
 
     public static class Builder{
+        public static final int CONNECTION_TIME_OUT = 3000;
+        public static final int READER_TIME_OUT = 3000;
+        public static final int WRITE_TIME_OUT = 3000;
         private String mUrl;
-        private HttpRequestProvider mProvider;
+        private HttpClient mHttpClient;
+//        private HttpRequestProvider mProvider;
         private ExecutorService mExecutor;
         private List<Convert> mConverts;
 
@@ -69,12 +73,15 @@ public class LQClient {
         }
 
         public LQClient builder(){
-            if(mProvider == null){
-                mProvider = new HttpRequestProvider();
-            }
-            if(mConverts == null){
-                mConverts = new ArrayList<>();
-                mConverts.add(new JsonConvert());
+            List<Convert> converts = new ArrayList<>();
+            converts.add(new JsonConvert());
+            this.mConverts = converts;
+            if(mHttpClient == null) {
+                mHttpClient = new HttpClient.Builder().
+                        setConnectTimeOut(CONNECTION_TIME_OUT).
+                        setReaderTimeOut(READER_TIME_OUT).
+                        setWriteTimeout(WRITE_TIME_OUT).
+                        builder();
             }
             return new LQClient(this);
         }
