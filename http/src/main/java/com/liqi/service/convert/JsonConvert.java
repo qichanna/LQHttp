@@ -1,6 +1,8 @@
 package com.liqi.service.convert;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 import com.liqi.http.HttpResponse;
 
 import java.io.IOException;
@@ -16,10 +18,13 @@ public class JsonConvert implements Convert {
 
     @Override
     public Object parse(HttpResponse response, Type type) throws IOException {
-
         Reader reader = new InputStreamReader(response.getBody());
-        return gson.fromJson(reader, type);
-
+        try {
+            return gson.fromJson(reader, type);
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override

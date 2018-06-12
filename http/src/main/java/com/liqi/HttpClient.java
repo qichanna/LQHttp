@@ -1,5 +1,6 @@
 package com.liqi;
 
+import com.liqi.http.HttpDns;
 import com.liqi.http.HttpResponse;
 import com.liqi.http.client.okhttp.OkHttpClient;
 import com.liqi.http.client.origin.OriginHttpClient;
@@ -8,8 +9,11 @@ import com.liqi.utils.Utills;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.KeyManagementException;
 import java.security.KeyStore;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 
@@ -17,7 +21,9 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
 
 public class HttpClient implements Call{
 
@@ -29,6 +35,7 @@ public class HttpClient implements Call{
     public SSLSocketFactory mSSLSocketFactory;
     private HostnameVerifier mHostnameVerifier;
     private Call mRealHttpClient;
+    private HttpDns mHttpDns;
 
     public HttpClient(Builder builder) {
         mWriteTimeOut = builder.mWriteTimeOut;
@@ -36,6 +43,11 @@ public class HttpClient implements Call{
         mConnectTimeOut = builder.mConnectTimeOut;
         mSSLSocketFactory = builder.mSSLSocketFactory;
         mHostnameVerifier = builder.mHostnameVerifier;
+        mHttpDns = builder.mHttpDns;
+    }
+
+    public HttpDns getHttpDns(){
+        return mHttpDns;
     }
 
     public int getmReaderTimeOut(){
@@ -70,12 +82,14 @@ public class HttpClient implements Call{
     }
 
     public static class Builder{
+        public static HostnameVerifier DEFAULT_HOST_NAME_VERIFIER = new DefaultHostnameVerifier();
+        public static SSLSocketFactory DEFAULT_SSL_SOCKET_FACTORY = getDefaultSocketFactory();
         private int mWriteTimeOut;
         private int mReaderTimeOut;
         private int mConnectTimeOut;
         public SSLSocketFactory mSSLSocketFactory;
         private HostnameVerifier mHostnameVerifier;
-        public static HostnameVerifier DEFAULT_HOSTNAMEVERIFER = new DefaultHostnameVerifier();
+        private HttpDns mHttpDns;
 
         static class DefaultHostnameVerifier implements HostnameVerifier{
 
@@ -83,6 +97,41 @@ public class HttpClient implements Call{
             public boolean verify(String hostname, SSLSession session) {
                 return true;
             }
+        }
+
+        /**
+         * 默认的证书管理
+         */
+        static class DefaultTrustManger implements X509TrustManager {
+
+            @Override
+            public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+
+            }
+
+
+            @Override
+            public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+
+            }
+
+            @Override
+            public X509Certificate[] getAcceptedIssuers() {
+                return new X509Certificate[0];
+            }
+        }
+
+        public static SSLSocketFactory getDefaultSocketFactory() {
+            SSLContext context = null;
+            try {
+                context = SSLContext.getInstance("TLS");
+                context.init(null, new TrustManager[]{new DefaultTrustManger()}, new SecureRandom());
+            } catch (KeyManagementException e) {
+                e.printStackTrace();
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            }
+            return context.getSocketFactory();
         }
 
         public SSLSocketFactory getSocketFactory(InputStream inputStream) throws Exception {
@@ -125,9 +174,23 @@ public class HttpClient implements Call{
             this.mHostnameVerifier = verifier;
             return this;
         }
+
+        public Builder setHttpDns(HttpDns dns){
+            this.mHttpDns = dns;
+            return this;
+        }
         
         public HttpClient builder(){
+            proxy();
             return new HttpClient(this);
+        }
+
+        private void proxy() {
+            String host = System.getProperty("http.proxyHost");
+            String port = System.getProperty("http.proxyPort");
+            if (host != null && port != null) {
+                mHttpDns = null;
+            }
         }
     }
 }

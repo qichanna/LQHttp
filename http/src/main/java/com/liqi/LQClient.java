@@ -1,5 +1,6 @@
 package com.liqi;
 
+import com.liqi.http.DefaultHttpDns;
 import com.liqi.service.convert.Convert;
 import com.liqi.service.convert.JsonConvert;
 
@@ -81,6 +82,9 @@ public class LQClient {
                         setConnectTimeOut(CONNECTION_TIME_OUT).
                         setReaderTimeOut(READER_TIME_OUT).
                         setWriteTimeout(WRITE_TIME_OUT).
+                        setHttpDns(new DefaultHttpDns()).
+                        setHostnameVerifier(HttpClient.Builder.DEFAULT_HOST_NAME_VERIFIER).
+                        setSSLSocketFactory(HttpClient.Builder.DEFAULT_SSL_SOCKET_FACTORY).
                         builder();
             }
             return new LQClient(this);
